@@ -15,10 +15,15 @@ const findFile = (nodes: FileNode[], id: string): FileNode | null => {
 
 export const useIDE = () => {
   const [files, setFiles] = useState<FileNode[]>(sampleFiles);
-  const [tabs, setTabs] = useState<Tab[]>([
-    { id: '6', name: 'index.html', language: 'html', content: sampleFiles[0].children![1].children![1].content!, isActive: true, isDirty: false },
-    { id: '7', name: 'add.js', language: 'javascript', content: sampleFiles[0].children![1].children![2].content!, isActive: false, isDirty: false },
-  ]);
+  const [tabs, setTabs] = useState<Tab[]>(() => {
+    const defaultTabs: Tab[] = [];
+    const srcFolder = sampleFiles[0]?.children?.find(c => c.name === 'src');
+    const indexFile = srcFolder?.children?.find(c => c.name === 'index.html');
+    const addFile = srcFolder?.children?.find(c => c.name === 'add.js');
+    if (indexFile?.content) defaultTabs.push({ id: indexFile.id, name: indexFile.name, language: 'html', content: indexFile.content, isActive: true, isDirty: false });
+    if (addFile?.content) defaultTabs.push({ id: addFile.id, name: addFile.name, language: 'javascript', content: addFile.content, isActive: !indexFile, isDirty: false });
+    return defaultTabs;
+  });
   const [activePanel, setActivePanel] = useState<PanelView>(null);
   const [selectedAI, setSelectedAI] = useState('gemini');
   const [showAIChat, setShowAIChat] = useState(false);
