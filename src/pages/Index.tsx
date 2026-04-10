@@ -1,16 +1,60 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useIDE } from '@/hooks/useIDE';
+import { Toolbar } from '@/components/ide/Toolbar';
+import { FileExplorer } from '@/components/ide/FileExplorer';
+import { TabBar } from '@/components/ide/TabBar';
+import { CodeEditor } from '@/components/ide/CodeEditor';
+import { ActionBar } from '@/components/ide/ActionBar';
+import { AIPanel } from '@/components/ide/AIPanel';
+import { StatusBar } from '@/components/ide/StatusBar';
 
-// IMPORTANT: Fully REPLACE this with your own code
-const PlaceholderIndex = () => {
-  // PLACEHOLDER: Replace this entire return statement with the user's app.
-  // The inline background color is intentionally not part of the design system.
+const Index = () => {
+  const {
+    files, tabs, activeTab, activePanel, selectedAI, showAIChat,
+    openFile, closeTab, switchTab, toggleFolder, togglePanel,
+    setSelectedAI, setShowAIChat,
+  } = useIDE();
+
   return (
-    <div className="flex min-h-screen items-center justify-center" style={{ backgroundColor: '#fcfbf8' }}>
-      <img data-lovable-blank-page-placeholder="REMOVE_THIS" src="/placeholder.svg" alt="Your app will live here!" />
+    <div className="h-screen flex flex-col overflow-hidden">
+      <Toolbar
+        activePanel={activePanel}
+        onTogglePanel={togglePanel}
+        onToggleAI={() => setShowAIChat(!showAIChat)}
+      />
+
+      <div className="flex-1 flex overflow-hidden relative">
+        {/* Side Panel */}
+        {activePanel === 'explorer' && (
+          <div className="w-64 shrink-0 border-r border-border/30 overflow-hidden">
+            <FileExplorer files={files} onFileClick={openFile} onFolderToggle={toggleFolder} />
+          </div>
+        )}
+
+        {/* Main Editor */}
+        <div className="flex-1 flex flex-col min-w-0">
+          {tabs.length > 0 && (
+            <TabBar tabs={tabs} onSwitch={switchTab} onClose={closeTab} />
+          )}
+          <CodeEditor tab={activeTab} />
+        </div>
+
+        {/* AI Panel */}
+        {showAIChat && (
+          <div className="absolute inset-0 z-10 sm:relative sm:w-72 sm:shrink-0 sm:border-l sm:border-border/30">
+            <AIPanel
+              selectedAI={selectedAI}
+              onSelectAI={setSelectedAI}
+              onClose={() => setShowAIChat(false)}
+              openTabs={tabs}
+            />
+          </div>
+        )}
+      </div>
+
+      <ActionBar />
+      <StatusBar activeTab={activeTab} selectedAI={selectedAI} />
     </div>
   );
 };
-
-const Index = PlaceholderIndex;
 
 export default Index;
