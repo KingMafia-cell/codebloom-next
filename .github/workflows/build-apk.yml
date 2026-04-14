@@ -17,6 +17,11 @@ jobs:
       - name: Build web app
         run: bun run build
         
+      - name: Upload to Capgo
+        run: bunx @capgo/cli@latest bundle upload --channel production
+        env:
+          CAPGO_TOKEN: ${{ secrets.CAPGO_TOKEN }}
+        
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
