@@ -1,26 +1,35 @@
 name: Build Android APK
-
-on: [push, workflow_dispatch]
+on:
+  push:
+    branches: [ main ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # needed to push version bump back to repo
     steps:
       - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
       
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v1
-        
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          
+      - name: Auto bump version
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          npm version patch -m "ci: bump version to %s [skip ci]"
+          git push
+          
       - name: Install deps
-        run: bun install
+        run: npm ci --legacy-peer-deps
         
-      - name: Build web app
-        run: bun run build
-        
-      - name: Upload to Capgo
-        run: bunx @capgo/cli@latest bundle upload --channel production
-        env:
-          CAPGO_TOKEN: ${{ secrets.CAPGO_TOKEN }}
+      - name: Build web
+        run: npm run build
         
       - name: Setup Java
         uses: actions/setup-java@v4
@@ -28,21 +37,24 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
           
-      - name: Setup Node 22
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          
       - name: Add Android + Sync
         run: |
-          bunx cap add android
-          bunx cap sync android
+          npm i @capacitor/android
+          npx cap add android
+          npx cap sync android
           
       - name: Build APK
-        run: cd android && ./gradlew assembleDebug
-        
+        run: |
+          cd android
+          ./gradlew assembleDebug
+          
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: app-debug
+          name: app-debug.apk
           path: android/app/build/outputs/apk/debug/app-debug.apk
+          
+      - name: Upload to Capgo
+        env:
+          CAPGO_TOKEN: ${{ secrets.CAPGO_TOKEN }}
+        run: bunx @capgo/cli@latest bundle upload --channel production
