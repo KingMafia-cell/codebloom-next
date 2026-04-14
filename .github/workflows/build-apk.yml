@@ -39,7 +39,7 @@ jobs:
           
       - name: Add Android + Sync
         run: |
-          npm i @capacitor/android
+          npm i @capacitor/android --legacy-peer-deps
           npx cap add android
           npx cap sync android
           
