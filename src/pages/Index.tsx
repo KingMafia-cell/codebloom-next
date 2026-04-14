@@ -1,48 +1,30 @@
-import { useState } from "react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { Toaster as Sonner } from "@/components/ui/sonner";
+import { Toaster } from "@/components/ui/toaster";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { CapacitorUpdater } from '@capgo/capacitor-updater'; // <-- ADD THIS LINE
+import Index from "./pages/Index.tsx";
+import NotFound from "./pages/NotFound.tsx";
 
-const Index = () => {
-  const [result, setResult] = useState("Result will be displayed here");
-  const [input1, setInput1] = useState("");
-  const [input2, setInput2] = useState("");
+CapacitorUpdater.notifyAppReady(); // <-- ADD THIS LINE
 
-  const handleClick = () => {
-    // Example: add the two numbers
-    const sum = Number(input1) + Number(input2);
-    setResult(`Result: ${sum}`);
-  };
+const queryClient = new QueryClient();
 
-  return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4">
-      <div className="w-full max-w-sm space-y-4">
-        <p className="text-xl text-center font-semibold">{result}</p>
-        
-        <input 
-          id="inp1"
-          type="number"
-          className="border rounded p-2 w-full"
-          value={input1}
-          onChange={(e) => setInput1(e.target.value)}
-          placeholder="First number"
-        />
-        
-        <input 
-          id="inp2"
-          type="number"
-          className="border rounded p-2 w-full"
-          value={input2}
-          onChange={(e) => setInput2(e.target.value)}
-          placeholder="Second number"
-        />
-        
-        <button 
-          className="bg-blue-600 text-white px-4 py-2 rounded w-full active:bg-blue-700"
-          onClick={handleClick}
-        >
-          CLICK
-        </button>
-      </div>
-    </div>
-  );
-};
+const App = () => (
+  <QueryClientProvider client={queryClient}>
+    <TooltipProvider>
+      <Toaster />
+      <Sonner />
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Index />} />
+          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </BrowserRouter>
+    </TooltipProvider>
+  </QueryClientProvider>
+);
 
-export default Index;
+export default App;
