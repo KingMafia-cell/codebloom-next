@@ -1,67 +1,46 @@
-import { useState } from 'react';
-import { useIDE } from '@/hooks/useIDE';
-import { useTheme } from '@/hooks/useTheme';
-import { Toolbar } from '@/components/ide/Toolbar';
-import { FileExplorer } from '@/components/ide/FileExplorer';
-import { TabBar } from '@/components/ide/TabBar';
-import { CodeEditor } from '@/components/ide/CodeEditor';
-import { ActionBar } from '@/components/ide/ActionBar';
-import { AIPanel } from '@/components/ide/AIPanel';
-import { StatusBar } from '@/components/ide/StatusBar';
-import { LockScreen } from '@/components/ide/LockScreen';
+import { useState } from "react";
 
 const Index = () => {
-  const [unlocked, setUnlocked] = useState(() => sessionStorage.getItem('ide-unlocked') === 'true');
-  const { theme, toggleTheme } = useTheme();
+  const [result, setResult] = useState("Result will be displayed here");
+  const [input1, setInput1] = useState("");
+  const [input2, setInput2] = useState("");
 
-  const {
-    files, tabs, activeTab, activePanel, selectedAI, showAIChat,
-    openFile, closeTab, switchTab, toggleFolder, togglePanel,
-    setSelectedAI, setShowAIChat,
-  } = useIDE();
-
-  if (!unlocked) {
-    return <LockScreen onUnlock={() => setUnlocked(true)} />;
-  }
+  const handleClick = () => {
+    // Example: add the two numbers
+    const sum = Number(input1) + Number(input2);
+    setResult(`Result: ${sum}`);
+  };
 
   return (
-    <div className="h-screen flex flex-col overflow-hidden">
-      <Toolbar
-        activePanel={activePanel}
-        onTogglePanel={togglePanel}
-        onToggleAI={() => setShowAIChat(!showAIChat)}
-        theme={theme}
-        onToggleTheme={toggleTheme}
-      />
-
-      <div className="flex-1 flex overflow-hidden relative">
-        {activePanel === 'explorer' && (
-          <div className="w-64 shrink-0 border-r border-border/30 overflow-hidden">
-            <FileExplorer files={files} onFileClick={openFile} onFolderToggle={toggleFolder} />
-          </div>
-        )}
-
-        <div className="flex-1 flex flex-col min-w-0">
-          {tabs.length > 0 && (
-            <TabBar tabs={tabs} onSwitch={switchTab} onClose={closeTab} />
-          )}
-          <CodeEditor tab={activeTab} />
-        </div>
-
-        {showAIChat && (
-          <div className="absolute inset-0 z-10 sm:relative sm:w-72 sm:shrink-0 sm:border-l sm:border-border/30">
-            <AIPanel
-              selectedAI={selectedAI}
-              onSelectAI={setSelectedAI}
-              onClose={() => setShowAIChat(false)}
-              openTabs={tabs}
-            />
-          </div>
-        )}
+    <div className="min-h-screen flex flex-col items-center justify-center p-4">
+      <div className="w-full max-w-sm space-y-4">
+        <p className="text-xl text-center font-semibold">{result}</p>
+        
+        <input 
+          id="inp1"
+          type="number"
+          className="border rounded p-2 w-full"
+          value={input1}
+          onChange={(e) => setInput1(e.target.value)}
+          placeholder="First number"
+        />
+        
+        <input 
+          id="inp2"
+          type="number"
+          className="border rounded p-2 w-full"
+          value={input2}
+          onChange={(e) => setInput2(e.target.value)}
+          placeholder="Second number"
+        />
+        
+        <button 
+          className="bg-blue-600 text-white px-4 py-2 rounded w-full active:bg-blue-700"
+          onClick={handleClick}
+        >
+          CLICK
+        </button>
       </div>
-
-      <ActionBar />
-      <StatusBar activeTab={activeTab} selectedAI={selectedAI} />
     </div>
   );
 };
