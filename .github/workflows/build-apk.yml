@@ -8,16 +8,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        
       - name: Install deps
-        run: npm install
+        run: bun install
         
       - name: Build web app
-        run: npm run build
+        run: bun run build
         
       - name: Setup Java
         uses: actions/setup-java@v4
@@ -25,10 +23,15 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
           
+      - name: Setup Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          
       - name: Add Android + Sync
         run: |
-          npx cap add android
-          npx cap sync android
+          bunx cap add android
+          bunx cap sync android
           
       - name: Build APK
         run: cd android && ./gradlew assembleDebug
