@@ -3,6 +3,7 @@ import react from "@vitejs/plugin-react-swc";
 import path from "path";
 
 export default defineConfig({
+  base: '/codebloom-next/', // THIS LINE FIXES THE 404
   plugins: [react()],
   test: {
     environment: "jsdom",
