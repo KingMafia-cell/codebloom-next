@@ -57,4 +57,4 @@ jobs:
       - name: Upload to Capgo
         env:
           CAPGO_TOKEN: ${{ secrets.CAPGO_TOKEN }}
-        run: bunx @capgo/cli@latest bundle upload --channel production
+        run: npx @capgo/cli@latest bundle upload --channel production
