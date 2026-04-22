@@ -4,8 +4,8 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { CapacitorUpdater } from '@capgo/capacitor-updater';
-import Index from "./pages/index";
-import NotFound from "./pages/notFound";
+import Index from "./pages/Index";
+import NotFound from "./pages/NotFound";
 
 CapacitorUpdater.notifyAppReady();
 
