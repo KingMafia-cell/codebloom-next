@@ -1,11 +1,14 @@
-
 import { useEffect } from "react";
-import { CapacitorUpdater } from "@capgo/capacitor-updater";
 import Index from "./pages/Index";
 
 function App() {
   useEffect(() => {
-    CapacitorUpdater.notifyAppReady();
+    try {
+      const { CapacitorUpdater } = require("@capgo/capacitor-updater");
+      CapacitorUpdater.notifyAppReady();
+    } catch (e) {
+      console.log("Updater not available");
+    }
   }, []);
 
   return <Index />;
