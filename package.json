@@ -12,7 +12,9 @@
     "test": "vitest run",
     "test:watch": "vitest"
   },
+
   "dependencies": {
+    "@capgo/capacitor-updater": "^6.0.0",
     "@capacitor/android": "^8.3.0",
     "@capacitor/cli": "^8.3.0",
     "@capacitor/core": "^8.3.0",
